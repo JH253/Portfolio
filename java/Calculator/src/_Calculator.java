@@ -1,13 +1,13 @@
 
 
-public class Calculator {
+public class _Calculator {
 
 	private CalculatorController ctrl;
 	private CalculatorView view;
 	private CalculatorModel model;
 	
 	
-	public Calculator() {
+	public _Calculator() {
 		view = new CalculatorView();
 		model = new CalculatorModel();
 		ctrl = new CalculatorController(view, model);
