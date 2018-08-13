@@ -1,12 +1,14 @@
 
 public class CalculatorModel {
 	
-	public String compute(String input) {
-		return null;
+	private PushDownAutomata pda;
+	
+	public CalculatorModel() {
+		pda = new PushDownAutomata();
 	}
 	
-	public Calculation parseCalculation(String input) {
-		return null;
+	public String compute(String input) {
+		return pda.parseCalculation(input).result().toString();
 	}
-
+	
 }
