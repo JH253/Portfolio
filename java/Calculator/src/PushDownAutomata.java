@@ -34,8 +34,10 @@ public class PushDownAutomata {
 		ArrayList<Transition> aOutGoing = new ArrayList<>();
 		//TODO: Create outgoing transitions for init state
 		initState = new State("A", aOutGoing);
-		//TODO: Finish the rest of the graph
-		
+
+		//TODO: Design PDA and write grammar in README.md
+		//TODO: Translate grammar into PDA
+		//TODO: Work backwords on PDA from final state creating State/transitions
 	}
 	
 	public Calculation parseCalculation(String input) {
