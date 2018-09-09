@@ -8,9 +8,9 @@ PushDownAutomata - This class models the PDA that parses the input. The grammar 
 				<Calculation> 	::=	<ParenCalc>( )<Operator>( )<ParenCalc>|<Number>	
 				<Operator> 	::=	+|-|/|*
 				<Number>	::=	<Integer>(.<Digits>)
-				<Integer>	::= (-)<PosInteger>	
-				<PosInteger>	::= 0 | <NonZeroDigit> | <NonZeroDigit><Digits>	
-				<Digits>	::= <Digit>(<Digits>)
+				<Integer>	::= 	(-)<PosInteger>	
+				<PosInteger>	::= 	0 | <NonZeroDigit> | <NonZeroDigit><Digits>	
+				<Digits>	::= 	<Digit>(<Digits>)
 				<Digit>		::=	0|1|2|..|9
 				<NonZeroDigit>	::=	1|2|3|..|9
 					
