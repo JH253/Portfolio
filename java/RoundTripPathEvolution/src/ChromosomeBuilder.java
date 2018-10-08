@@ -6,21 +6,11 @@ import java.util.Random;
 
 public class ChromosomeBuilder {
 	
-	private LocationFileReader lfr;
 	private List<Location> locations;
-//	private HashMap<Integer,Location> enumeratedLoc;
-	
+
 	public ChromosomeBuilder(LocationFileReader lfr) 
 			throws IOException {
-		this.lfr = lfr;
-		HashMap<Integer,Location> enumeratedLoc = new HashMap<>();
 		locations = lfr.read();
-//		ListIterator<Location> it = locations.listIterator();
-//		while(it.hasNext()) {
-//			enumeratedLoc.put(it.nextIndex(), it.next());
-//		}
-		
-		List<Chromosome> p = getPopulation(50);
  	}
 	
 	public List<Chromosome> getPopulation(int popNum){
@@ -37,7 +27,7 @@ public class ChromosomeBuilder {
 	}
 	
 	public void randomise(List<Location> l) {
-		Random randGen = new Random();
+		Random randGen = new Random(34882L);
 		int swaps = l.size() / 3;
 		for(int j = 0; j < swaps; j++) {
 			swap(
@@ -53,7 +43,4 @@ public class ChromosomeBuilder {
 		l.set(a, l.get(b));
 		l.set(b, temp);
 	}
-	
-	
-	
 }
