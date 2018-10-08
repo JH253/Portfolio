@@ -1,7 +1,11 @@
+import java.util.List;
 
 public class Chromosome {
+	
+	public Chromosome(List<Location> randLoc) {
+		// TODO Auto-generated constructor stub
+	}
 
-	//genotype?
-	//what am I capturing in this model? is it worth it?
-	private Tour<Location> phenotype;
+	
+	
 }

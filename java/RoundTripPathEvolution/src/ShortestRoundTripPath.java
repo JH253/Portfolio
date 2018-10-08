@@ -1,24 +1,22 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
 public class ShortestRoundTripPath {
 
+	public ShortestRoundTripPath(String path) throws IOException {
+		LocationFileReader lfr = new LocationFileReader(path);
+		ChromosomeBuilder cb = new ChromosomeBuilder(lfr);
+	}
+
 	public static void main(String[] args) {
-		List<Location> locations;
 		
 		try {
-			LocationFileReader lfr = new LocationFileReader(args[0]);
-			locations = lfr.read();
-			lfr.close();
-			
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found, please input valid path.");
-			e.printStackTrace();
+			new ShortestRoundTripPath(args[0]);
 		} catch (IOException e) {
-			System.err.println("Error when reading file.");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 }
