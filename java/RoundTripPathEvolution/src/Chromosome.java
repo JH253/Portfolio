@@ -18,5 +18,15 @@ public class Chromosome {
 		return locations;
 	}
 	
+	//scores this chromosome (the total round trip distance) NEEDS TESTING
+	public double fitness() {
+		double totalDistance = 0;
+		for(int i = 0, j = 1; i < phenotype.size(); i++, j++) {
+			totalDistance += phenotype.get(i)
+					.distanceTo(phenotype.get(j % phenotype.size()));
+		}
+		return totalDistance;
+	}
+	
 	
 }

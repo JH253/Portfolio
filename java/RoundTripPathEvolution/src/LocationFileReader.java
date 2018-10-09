@@ -29,7 +29,10 @@ public class LocationFileReader {
 			//Splits the string at the comma, splitting long and lat
 			String[] locs = x.split(",");
 			//Returns a new location using the splitted values
-			return new Location(locs[0],locs[1]); })
+			return new Location(Double.parseDouble(locs[0])/1000.0,
+					Double.parseDouble(locs[1])/1000.0); 
+			}
+		)
 		//Collects to a list, so we can close the input stream.
 		.collect(Collectors.toList());
 	}

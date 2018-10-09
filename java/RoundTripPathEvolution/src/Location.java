@@ -4,19 +4,16 @@ public class Location implements Cloneable {
 	private final double longitude;
 	private final double latitude;
 
-	public Location(String longitude, String latitude) {
-		this.longitude = Double.parseDouble(longitude);
-		this.latitude = Double.parseDouble(latitude);
-	}
-	
-	public Location(double longitude, double latitude) {
-		this.longitude = longitude;
-		this.latitude = latitude;
+	public Location(double latitude, double longitude) {
+		this.longitude = Math.toRadians(longitude);
+		this.latitude = Math.toRadians(latitude);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("(%.4f,%.4f)", longitude,latitude);
+		return String.format("(%.4f,%.4f)", 
+				Math.toDegrees(latitude), 
+				Math.toDegrees(longitude));
 	}
 	
 	@Override
@@ -28,25 +25,23 @@ public class Location implements Cloneable {
 		}
 	}
 	
-	@Override
-	public int hashCode() {
-		String slong = ("" + longitude);
-		String first = slong.substring(3, slong.indexOf('.')) +
-				slong.substring(slong.indexOf('.') + 1, slong.length());
-		String slat = ("" + latitude);
-		String second = "" + slat.charAt(slat.indexOf('.')  - 1);
-		
-		return Integer.parseInt(first + second);
+	//distance in km (should be accurate to 2dp)
+	public double distanceTo(Location locB) {
+        double x1 = this.latitude;
+        double y1 = this.longitude;
+        double x2 = locB.latitude;
+        double y2 = locB.longitude;
+
+        double a = Math.pow(Math.sin((x2-x1)/2), 2)
+                 + Math.cos(x1) * Math.cos(x2) * Math.pow(Math.sin((y2-y1)/2), 2);
+
+        double angle = 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+
+        return 6371* angle;
+
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof Location) {
-			return this.longitude == ((Location) obj).longitude &&
-					this.latitude == ((Location) obj).latitude;
-		} else {
-			return false;
-		}
-	}
+	
+	
 	
 }
