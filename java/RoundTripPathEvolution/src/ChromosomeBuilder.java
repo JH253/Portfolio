@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 public class ChromosomeBuilder {
@@ -13,8 +13,13 @@ public class ChromosomeBuilder {
 		locations = lfr.read();
  	}
 	
-	public List<Chromosome> getPopulation(int popNum){
-		List<Chromosome> c = new ArrayList<>();
+	public PriorityQueue<Chromosome> getPopulation(int popNum){
+		PriorityQueue<Chromosome> c = 
+				new PriorityQueue<Chromosome>(
+						popNum, (a,b) -> 
+							(int)(a.fitness() - b.fitness())
+				);
+		
 		for(int i = 0; i < popNum; i++) {
 			List<Location> randLoc = new ArrayList<>();
 			for(Location l : locations) {
@@ -27,7 +32,7 @@ public class ChromosomeBuilder {
 	}
 	
 	public void randomise(List<Location> l) {
-		Random randGen = new Random(34882L);
+		Random randGen = new Random();
 		int swaps = l.size() / 3;
 		for(int j = 0; j < swaps; j++) {
 			swap(
