@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 public class ShortestRoundTripPath {
 
 	public ShortestRoundTripPath(String path) throws IOException {
+		// Set up for testing chromosome crossing
 		LocationFileReader lfr = new LocationFileReader(path);
 		ChromosomeBuilder cb = new ChromosomeBuilder(lfr);
 		
@@ -16,9 +17,9 @@ public class ShortestRoundTripPath {
 	public static void main(String[] args) {
 
 		try {
+			//Testing the shortest path
 			new ShortestRoundTripPath(args[0]);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
