@@ -1,0 +1,7 @@
+*
+!README.md
+!.gitignore
+!java/Calculator/src/*
+!java/Chess/src/*
+!java/Chess/src/pieces/*
+!java/RoundTripPathEvolution/src/*
