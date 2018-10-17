@@ -14,16 +14,17 @@ public class Chromosome {
 		this.mutationRate = 0;
 	}
 	
-	//http://user.ceng.metu.edu.tr/~ucoluk/research/publications/tspnew.pdf
 	
-	// using PMX
+	
+	// Using order 1 crossover
 	public Chromosome(Chromosome mother, Chromosome father, double mutationRate) {
 		this.mutationRate = mutationRate;
-		//REMOVE THIS
+		//REMOVE THIS - Testing purposes
 		this.phenotype = null;
 		Random randGen = new Random();
 		//between 50-100 cuts
 		int numCuts = randGen.nextInt(50) + 50;
+		//Chops mother and futhers chromosome at random cuts
 		List<Integer> snips = snipList(numCuts, randGen, mother);
 		List<List<Location>> motherSnips = new ArrayList<>();
 		List<List<Location>> fatherSnips = new ArrayList<>();
@@ -42,35 +43,26 @@ public class Chromosome {
 		
 		List<Integer> mask = bitMask(snips.size() + 1, randGen);
 		
+		List<List<Location>> child = new ArrayList<>();
+		for(int i = 0; i < motherSnips.size(); i++) {
+			if(mask.get(i) == 1) {
+				child.set(i, motherSnips.get(i));
+			}else {
+				child.set(i, null);
+			}
+		}
+		
+		
+		
 		System.out.println("mask size: " + mask.size());
 		System.out.println("motherSnips: " + motherSnips.size());
 		System.out.println("fatherSnips: " + fatherSnips.size());
 		System.out.println();
 
-		
-		//loop through both the father and the masks
-		for(int i = 0; i < mask.size(); i++) {
-			// if mask[i] == 1 then 
-			if(mask.get(i).equals(1)) {
-				//replace motherclone[i] with fatherclone[i]
-				replace(motherSnips, fatherSnips, i);
-				System.out.println("Mask is 1");
-			}
-		}
-		
-		//rename motherclone to child
-		//flatten child
-		//phenotype = child
+
 	}
 	
-	//replace(f,m,i):
-	private void replace(List<List<Location>> motherSnips, List<List<Location>> fatherSnips, int i) {
-		//for j in m[i]:
-		for(int j = 0; j < motherSnips.get(i).size(); j++) {
-			//v = find f[i][j] in m
-			//swap v with m[i][j]				
-		}
-	}
+
 	
 	private List<Integer> bitMask(int numBits, Random randGen){
 		List<Integer> bits = new ArrayList<>();
@@ -80,12 +72,14 @@ public class Chromosome {
 		return bits;
 	}
 	
-	private List<Integer> snipList(int numSnips, Random randGen, Chromosome mother){
+	//Cuts randomly between 2 -> c.size - 2 
+	private List<Integer> snipList(int numSnips, Random randGen, Chromosome c){
 		List<Integer> cuts = new ArrayList<>();
 		for(int i = 0; i < numSnips; i++) {
-			int value = randGen.nextInt(mother.phenotype.size());
+			int value = randGen.nextInt(c.phenotype.size() - 4) + 2;
+			//No duplicate values so no empty lists
 			while(cuts.contains(value)) {
-				value = randGen.nextInt(mother.phenotype.size() - 4) + 2;
+				value = randGen.nextInt(c.phenotype.size() - 4) + 2;
 			}
 			cuts.add(value);
 		}
