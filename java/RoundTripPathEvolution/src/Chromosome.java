@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Chromosome {
 	
@@ -25,7 +27,7 @@ public class Chromosome {
 		//between 50-100 cuts
 		int numCuts = randGen.nextInt(50) + 50;
 		//Chops mother and futhers chromosome at random cuts
-		List<Integer> snips = snipList(numCuts, randGen, mother);
+		List<Integer> snips = snipList(numCuts, randGen, mother.phenotype);
 		List<List<Location>> motherSnips = new ArrayList<>();
 		List<List<Location>> fatherSnips = new ArrayList<>();
 		
@@ -62,24 +64,20 @@ public class Chromosome {
 
 	}
 	
-
-	
 	private List<Integer> bitMask(int numBits, Random randGen){
-		List<Integer> bits = new ArrayList<>();
-		for(int i = 0; i < numBits; i++) {
-			bits.add((randGen.nextInt(100) <= 50)? 1 : 0);
-		}
-		return bits;
+		return Stream.generate(() -> (randGen.nextInt(100) <= 50)? 1 : 0)
+				.limit(numBits)
+				.collect(Collectors.toList());
 	}
 	
 	//Cuts randomly between 2 -> c.size - 2 
-	private List<Integer> snipList(int numSnips, Random randGen, Chromosome c){
+	private <T extends List<?>> List<Integer> snipList(int numSnips, Random randGen, T c){
 		List<Integer> cuts = new ArrayList<>();
 		for(int i = 0; i < numSnips; i++) {
-			int value = randGen.nextInt(c.phenotype.size() - 4) + 2;
+			int value = randGen.nextInt(c.size() - 4) + 2;
 			//No duplicate values so no empty lists
 			while(cuts.contains(value)) {
-				value = randGen.nextInt(c.phenotype.size() - 4) + 2;
+				value = randGen.nextInt(c.size() - 4) + 2;
 			}
 			cuts.add(value);
 		}
