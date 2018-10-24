@@ -6,3 +6,4 @@
 !java/Chess/src/pieces/*
 !java/RoundTripPathEvolution/src/*
 !java/RoundTripPathEvolution/src/data/*
+!python/projects/NeuralNetwork/*
