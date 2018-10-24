@@ -6,4 +6,7 @@
 !java/Chess/src/pieces/*
 !java/RoundTripPathEvolution/src/*
 !java/RoundTripPathEvolution/src/data/*
-!python/projects/NeuralNetwork/*
+!python
+!python/projects/
+!python/projects/NeuralNetwork
+!python/projects/NeuralNetwork/NeuralNetwork.py
