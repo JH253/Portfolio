@@ -21,17 +21,18 @@ class NeuralNetwork:
 		
 		# dcdw2 = dz3dw2 * dcdz3 
 		# This dot product also deals with the sum of the errors
-		dcdw2 = np.dot(self.a2.T, delta3)
+		# a regularisation term is added into the score function to account for 
+		# any overfitting.
+		dcdw2 = np.dot(self.a2.T, delta3) + (self.w2 * 1e-3)
 		
 		
 		# dcdz2 is computed by the chain rule dcdz2 = dcdz3 * dz3da2 * da2dz2 
 		delta2 = np.dot(delta3, self.w2.T)*self.sigmoidPrime(self.z2)
-		dcdw1 = np.dot(x.T, delta2) 
+		dcdw1 = np.dot(x.T, delta2) + (self.w1 * 1e-3)
 		
 		return dcdw1, dcdw2
 		
 	# Trains for a default of 100000 epochs, pre-optimisation
-	# Note: no regularisation is used either
 	def train(self,x,y,n=100000):
 		for i in range(n):
 			#computes the gradient of the cost function with respect to the weights
