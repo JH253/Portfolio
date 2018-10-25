@@ -6,7 +6,7 @@ class NeuralNetwork:
 		def __init__(self, inputInfo, layerInfo, hyperperams):
 			self.hyperperams = hyperperams
 			self.weights = np.random.randn(layerInfo["numRows"],layerInfo["numColumns"]) * 0.01
-			self.bias = np.zeros((inputInfo["numRows"] , 1))
+			self.bias = np.zeros((1, layerInfo["numColumns"]))
 			
 		def forward(self, x):
 			self.activity = x
@@ -19,8 +19,8 @@ class NeuralNetwork:
 			dcostdw = np.dot(self.activity.T, dcostdyHat)
 			dcostdb = dcostdyHat
 			
-			dcostdb = np.sum(dcostdb,axis=1)
-			dcostdb.shape = (dcostdb.shape[0],1)
+			dcostdb = np.sum(dcostdb, axis = 0)
+			dcostdb.shape = (1, dcostdb.shape[0])
 			
 			self.weights -= dcostdw * self.hyperperams["learningRate"] + \
 				self.weights * self.hyperperams["regularisation"]
@@ -148,6 +148,11 @@ def main(args):
 	
 	nn.printNetwork()
 	
+	test = np.array([[1, 0], [0, 0], [1, 1], [1, 0]])
+	print("testing : \n" + str(test))
+	result = nn.forward(test)
+	print("expected : [[1], [0], [1], [1]]")
+	print("acutally got: \n" + str(result))
 	
 if(__name__=="__main__"):
 	main(sys.argv[1:])
