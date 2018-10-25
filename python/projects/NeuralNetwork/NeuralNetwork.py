@@ -32,10 +32,12 @@ class NeuralNetwork:
 			return delta
 			
 		def printLayer(self):
-			print("bias.shape: " + str(self.bias.shape))
-			print("bias:\n" + str(self.bias) + "\n")
-			print("weight.shape: " + str(self.weights.shape))
-			print("weight:\n" + str(self.weights) + "\n")		
+			print("\t<layer>")
+			print("\t\t<bias.shape> " + str(self.bias.shape) + " <\\bias.shape>")
+			print("\t\t<bias>\n" + str(self.bias) + "\n\t\t<\\bias>")
+			print("\t\t<weight.shape> " + str(self.weights.shape) + " <\\weight.shape>")
+			print("\t\t<weight>\n" + str(self.weights) + "\n\t\t<\\weight>")	
+			print("\t<\\layer>")			
 
 	def __init__(self, info):
 		self.hyperperams = info["hyperperams"]
@@ -87,12 +89,12 @@ class NeuralNetwork:
 			self.backprop(delta)
 	
 	def printNetwork(self):
-		print("====Neural Network====")
+		print("<Neural Network>")
 		self.inputLayer.printLayer()
 		for l in self.hiddenLayers:
 			l.printLayer()
 		self.outputLayer.printLayer()
-		print("====\\Neural Network====")	
+		print("<\\Neural Network>")	
 	
 def tanh(z):
   return np.tanh(z)
