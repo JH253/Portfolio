@@ -3,7 +3,7 @@ import numpy as np
 
 class NeuralNetwork:
 	class __Layer:
-		def __init__(self, inputInfo, layerInfo, hyperperams):
+		def __init__(self, layerInfo, hyperperams):
 			self.hyperperams = hyperperams
 			self.weights = np.random.randn(layerInfo["numRows"],layerInfo["numColumns"]) * 0.01
 			self.bias = np.zeros((1, layerInfo["numColumns"]))
@@ -40,20 +40,17 @@ class NeuralNetwork:
 	def __init__(self, info):
 		self.hyperperams = info["hyperperams"]
 		self.inputLayer = self.__Layer(
-			info["inputInfo"], 
 			info["inputLayer"], 
 			info["hyperperams"]
 		)
 		self.hiddenLayers = []
 		for i in range(len(info["hiddenLayers"])):
 			self.hiddenLayers.append(self.__Layer(
-				info["inputInfo"], 
 				info["hiddenLayers"][i], 
 				info["hyperperams"]
 				)
 			)
 		self.outputLayer = self.__Layer(
-			info["inputInfo"], 
 			info["outputLayer"], 
 			info["hyperperams"]
 		)
@@ -120,11 +117,6 @@ def main(args):
 	#This is a deep neural network, you can define additional hidden layers
 	#by updating the hidden layer section.
 	structureInfo = { 
-		#required for calculating bias
-		"inputInfo" : {
-			"numRows" : x.shape[0],
-			"numColumns" : x.shape[1]
-		},
 		"inputLayer" : {
 			"numRows" : x.shape[1],
 			"numColumns" : 3	
