@@ -86,25 +86,23 @@ class NeuralNetwork:
 	
 	
 	
+def tanh(z):
+  return np.tanh(z)
 
-def sigmoid(x):
-	return 1 / (1 + np.exp(-x))
-	
-def sigmoidPrime(x):
-	return sigmoid(x) * (1 - sigmoid(x))
+def tanhPrime(a):
+  return 1 - tanh(a) ** 2
 	
 def main(args):
 	x = np.array([[0,0],[0,1],[1,0],[1,1]])
 	y = np.array([[0],[1],[1],[1]])
 
 	hyperperams = {
-		"learningRate" : 1e-1,
-		"regularisation" : 1e-3,
-		"epochs" : 100000,
-		"activation" : sigmoid,
-		"activationPrime" : sigmoidPrime
+		"learningRate" : 1e-2,
+		"regularisation" : 1e-4,
+		"epochs" : 10000,
+		"activation" : tanh,
+		"activationPrime" : tanhPrime
 	}
-	
 	#Note: This strucutre is likely to overfit due to it's size,
 	#      this is purely for demonstration.
 	
@@ -118,41 +116,28 @@ def main(args):
 		},
 		"inputLayer" : {
 			"numRows" : x.shape[1],
-			"numColumns" : 4	
+			"numColumns" : 3	
 		},
 		"hiddenLayers" : [
 			{
-				"numRows" : 4,
-				"numColumns" : 3		
-			},
-			{
-				"numRows" : 3,
-				"numColumns" : 3		
-			},
-			{
-				"numRows" : 3,
-				"numColumns" : 4	
+			"numRows" : 3,
+			"numColumns" : 3	
 			}
+			
 		],
 		"outputLayer" : {
-			"numRows" : 4,
+			"numRows" : 3,
 			"numColumns" : y.shape[1]	
 		},
 		"hyperperams" : hyperperams
-	}
-					
+	}				
 	nn = NeuralNetwork(structureInfo)
 	print("input:\n" + str(x))
 	print("result of forward:\n" + str(nn.forward(x)))
-	
 	print("...training...")
-	
 	nn.train(x, y)
-	
 	print("finished training")
 	print("result of new forward:\n" + str(nn.forward(x)))
-	
-	
 	
 if(__name__=="__main__"):
 	main(sys.argv[1:])
