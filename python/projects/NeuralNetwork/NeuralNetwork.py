@@ -10,15 +10,14 @@ class NeuralNetwork:
 			
 		def forward(self, x):
 			self.activity = x
-			self.preBias = np.dot(x, self.weights)
-			self.preActivation = self.preBias + self.bias
+			self.preActivation = np.dot(x, self.weights) + self.bias
 			self.yHat = self.hyperperams["activation"](self.preActivation)
 			return self.yHat
 		
 		def backprop(self, derr):
 			dcostdyHat = np.multiply(derr, self.hyperperams["activationPrime"](self.preActivation))
 			dcostdw = np.dot(self.activity.T, dcostdyHat)
-			dcostdb = np.multiply(self.preBias, dcostdyHat)
+			dcostdb = dcostdyHat
 			
 			dcostdb = np.sum(dcostdb,axis=1)
 			dcostdb.shape = (dcostdb.shape[0],1)
@@ -26,11 +25,17 @@ class NeuralNetwork:
 			self.weights -= dcostdw * self.hyperperams["learningRate"] + \
 				self.weights * self.hyperperams["regularisation"]
 				
-			self.bias -= dcostdb * self.hyperperams["learningRate"]
+			self.bias -= dcostdb * self.hyperperams["learningRate"] + \
+				self.bias * self.hyperperams["regularisation"]
 			
 			delta = np.dot(dcostdyHat, self.weights.T)
 			return delta
-		
+			
+		def printLayer(self):
+			print("bias.shape: " + str(self.bias.shape))
+			print("bias:\n" + str(self.bias) + "\n")
+			print("weight.shape: " + str(self.weights.shape))
+			print("weight:\n" + str(self.weights) + "\n")		
 
 	def __init__(self, info):
 		self.hyperperams = info["hyperperams"]
@@ -84,7 +89,13 @@ class NeuralNetwork:
 			delta = self.costPrime(y, yHat)
 			self.backprop(delta)
 	
-	
+	def printNetwork(self):
+		print("====Neural Network====")
+		self.inputLayer.printLayer()
+		for l in self.hiddenLayers:
+			l.printLayer()
+		self.outputLayer.printLayer()
+		print("====\\Neural Network====")	
 	
 def tanh(z):
   return np.tanh(z)
@@ -97,8 +108,8 @@ def main(args):
 	y = np.array([[0],[1],[1],[1]])
 
 	hyperperams = {
-		"learningRate" : 1e-2,
-		"regularisation" : 1e-4,
+		"learningRate" : 1e-1,
+		"regularisation" : 2e-4,
 		"epochs" : 10000,
 		"activation" : tanh,
 		"activationPrime" : tanhPrime
@@ -119,10 +130,6 @@ def main(args):
 			"numColumns" : 3	
 		},
 		"hiddenLayers" : [
-			{
-			"numRows" : 3,
-			"numColumns" : 3	
-			}
 			
 		],
 		"outputLayer" : {
@@ -138,6 +145,9 @@ def main(args):
 	nn.train(x, y)
 	print("finished training")
 	print("result of new forward:\n" + str(nn.forward(x)))
+	
+	nn.printNetwork()
+	
 	
 if(__name__=="__main__"):
 	main(sys.argv[1:])
