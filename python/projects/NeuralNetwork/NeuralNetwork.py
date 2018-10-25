@@ -2,77 +2,157 @@ import sys
 import numpy as np
 
 class NeuralNetwork:
-	def __init__(self):
-		self.inputLayerSize = 2
-		self.hiddenLayerSize = 3
-		self.outputLayerSize = 1
+	class __Layer:
+		def __init__(self, inputInfo, layerInfo, hyperperams):
+			self.hyperperams = hyperperams
+			self.weights = np.random.randn(layerInfo["numRows"],layerInfo["numColumns"]) * 0.01
+			self.bias = np.zeros((inputInfo["numRows"] , 1))
+			
+		def forward(self, x):
+			self.activity = x
+			self.preBias = np.dot(x, self.weights)
+			self.preActivation = self.preBias + self.bias
+			self.yHat = self.hyperperams["activation"](self.preActivation)
+			return self.yHat
 		
-		# The activation function has greatest gradients near 0, thus a small randomly
-		# generated value is calculated for each weight
-		self.w1 = np.random.randn(self.inputLayerSize, self.hiddenLayerSize) * 0.01
-		self.w2 = np.random.randn(self.hiddenLayerSize, self.outputLayerSize ) * 0.01
+		def backprop(self, derr):
+			dcostdyHat = np.multiply(derr, self.hyperperams["activationPrime"](self.preActivation))
+			dcostdw = np.dot(self.activity.T, dcostdyHat)
+			dcostdb = np.multiply(self.preBias, dcostdyHat)
+			
+			dcostdb = np.sum(dcostdb,axis=1)
+			dcostdb.shape = (dcostdb.shape[0],1)
+			
+			self.weights -= dcostdw * self.hyperperams["learningRate"] + \
+				self.weights * self.hyperperams["regularisation"]
+				
+			self.bias -= dcostdb * self.hyperperams["learningRate"]
+			
+			delta = np.dot(dcostdyHat, self.weights.T)
+			return delta
+		
 
-	def errorGradients(self, x, y):
-		# A forward pass is made to calculate the intermediary values.
-		self.yHat = self.forward(x)
-		
-		# An element wise multiply is carried out to calculate dcdz3
-		delta3 = np.multiply(-(y-self.yHat), self.sigmoidPrime(self.z3))
-		
-		# dcdw2 = dz3dw2 * dcdz3 
-		# This dot product also deals with the sum of the errors
-		# a regularisation term is added into the score function to account for 
-		# any overfitting.
-		dcdw2 = np.dot(self.a2.T, delta3) + (self.w2 * 1e-3)
-		
-		
-		# dcdz2 is computed by the chain rule dcdz2 = dcdz3 * dz3da2 * da2dz2 
-		delta2 = np.dot(delta3, self.w2.T)*self.sigmoidPrime(self.z2)
-		dcdw1 = np.dot(x.T, delta2) + (self.w1 * 1e-3)
-		
-		return dcdw1, dcdw2
-		
-	# Trains for a default of 100000 epochs, pre-optimisation
-	def train(self,x,y,n=100000):
-		for i in range(n):
-			#computes the gradient of the cost function with respect to the weights
-			dcdw1, dcdw2 = self.errorGradients(x,y)
-			#trains with a training rate of 1e-1 
-			self.w1 -= dcdw1 * 1e-1
-			self.w2 -= dcdw2 * 1e-1
+	def __init__(self, info):
+		self.hyperperams = info["hyperperams"]
+		self.inputLayer = self.__Layer(
+			info["inputInfo"], 
+			info["inputLayer"], 
+			info["hyperperams"]
+		)
+		self.hiddenLayers = []
+		for i in range(len(info["hiddenLayers"])):
+			self.hiddenLayers.append(self.__Layer(
+				info["inputInfo"], 
+				info["hiddenLayers"][i], 
+				info["hyperperams"]
+				)
+			)
+		self.outputLayer = self.__Layer(
+			info["inputInfo"], 
+			info["outputLayer"], 
+			info["hyperperams"]
+		)
 	
-	# The computation is split into parts to be used
-	# in the back propogation stage.
-	def forward(self,x):
-		# a2 = sigmoid(x*w1)
-		self.z2 = np.dot(x,self.w1)
-		self.a2 = self.sigmoid(self.z2)
+	def forward(self, x):
+		a = self.inputLayer.forward(x)
+		for l in self.hiddenLayers:
+			a = l.forward(a)
+		return self.outputLayer.forward(a)
+	
+	def backprop(self, derr):
+		delta = self.outputLayer.backprop(derr)
+		for l in self.hiddenLayers[::-1]:
+			delta = l.backprop(delta)
+		self.inputLayer.backprop(delta)
 		
-		#yhat = sigmoid(a2*w2)
-		self.z3 = np.dot(self.a2,self.w2)
-		yHat = self.sigmoid(self.z3)
-		
-		return yHat
+	def cost(self, y, yHat):
+		return 1/2 * (y - yHat) ** 2
+	
+	def costPrime(self, y, yHat):
+		return yHat - y
+	
+	def train(self, x, y):
+		for e in range(self.hyperperams["epochs"]):
+			yHat = self.forward(x)
+			c = self.cost(y, yHat)
+			print("iteration " + str(e)  + "/" 
+				+ str(self.hyperperams["epochs"]) 
+				+ " current cost: " 
+				+ str(sum(c)/c.shape[0])
+			)
+				
+			delta = self.costPrime(y, yHat)
+			self.backprop(delta)
+	
+	
+	
 
-	def sigmoid(self,z):
-		return 1 / (1 + np.exp(-z))
-		
-	def sigmoidPrime(self,z):
-		return self.sigmoid(z) * (1 - self.sigmoid(z))
-
+def sigmoid(x):
+	return 1 / (1 + np.exp(-x))
+	
+def sigmoidPrime(x):
+	return sigmoid(x) * (1 - sigmoid(x))
+	
 def main(args):
+	x = np.array([[0,0],[0,1],[1,0],[1,1]])
+	y = np.array([[0],[1],[1],[1]])
 
-	#Training neural network to emulate OR gate
-	X = np.array([[0,0], [0,1], [1,0], [1,1]], dtype=float)
-	Y = np.array([[0], [1], [1], [1]], dtype=float)
-
-	nn = NeuralNetwork()
-	print("Pre training:\n" + str(nn.forward(X)))
+	hyperperams = {
+		"learningRate" : 1e-1,
+		"regularisation" : 1e-3,
+		"epochs" : 100000,
+		"activation" : sigmoid,
+		"activationPrime" : sigmoidPrime
+	}
 	
-	nn.train(X,Y)
-	print("Post training:\n" + str(nn.forward(X)))
+	#Note: This strucutre is likely to overfit due to it's size,
+	#      this is purely for demonstration.
+	
+	#This is a deep neural network, you can define additional hidden layers
+	#by updating the hidden layer section.
+	structureInfo = { 
+		#required for calculating bias
+		"inputInfo" : {
+			"numRows" : x.shape[0],
+			"numColumns" : x.shape[1]
+		},
+		"inputLayer" : {
+			"numRows" : x.shape[1],
+			"numColumns" : 4	
+		},
+		"hiddenLayers" : [
+			{
+				"numRows" : 4,
+				"numColumns" : 3		
+			},
+			{
+				"numRows" : 3,
+				"numColumns" : 3		
+			},
+			{
+				"numRows" : 3,
+				"numColumns" : 4	
+			}
+		],
+		"outputLayer" : {
+			"numRows" : 4,
+			"numColumns" : y.shape[1]	
+		},
+		"hyperperams" : hyperperams
+	}
+					
+	nn = NeuralNetwork(structureInfo)
+	print("input:\n" + str(x))
+	print("result of forward:\n" + str(nn.forward(x)))
+	
+	print("...training...")
+	
+	nn.train(x, y)
+	
+	print("finished training")
+	print("result of new forward:\n" + str(nn.forward(x)))
 	
 	
-
+	
 if(__name__=="__main__"):
 	main(sys.argv[1:])
