@@ -148,10 +148,10 @@ def main(args):
 	
 	nn.printNetwork()
 	
-	test = np.array([[1, 0], [0, 0], [1, 1], [1, 0]])
+	test = np.array([[1, 0], [0, 0], [1, 1], [1, 0], [1, 1]])
 	print("testing : \n" + str(test))
 	result = nn.forward(test)
-	print("expected : [[1], [0], [1], [1]]")
+	print("expected : [[1], [0], [1], [1], [1]]")
 	print("acutally got: \n" + str(result))
 	
 if(__name__=="__main__"):
